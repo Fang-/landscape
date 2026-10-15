@@ -79,6 +79,7 @@
         (~(connect pass /eyre) /session %docket)
     ==
   ?>  ?=(%6 -.old)
+  ::TODO  remove globs from state
   =/  cards-tire  [~(tire pass /tire) ~]
   =.  -.state  old
   ::  inflate-cache needs to be called after the state is set
@@ -199,14 +200,8 @@
         [%glob @ @ ~]
       =*  base  i.t.path
       =/  hash  (slav %uv i.t.t.path)
-      =/  desk     ~|(path/path (~(got by by-base) i.t.path))
-      =/  =charge  ~|(desk/desk (~(got by charges) desk))
-      ?>  ?=(%glob -.chad.charge)
-      =/  have  (hash-glob:cc glob.chad.charge)
-      ~|  [%glob-unavailable requested=hash have=have]
-      ?>  =(hash have)
-      :_  state
-      (fact-init-kick:io (glob:cg glob.chad.charge))
+      ~|  [%glob-unavailable requested=hash have=%gone]
+      !!
     ==
   [cards this]
 ::
@@ -294,59 +289,7 @@
       ((slog leaf+"Failed to uninstall %{(trip desk)}" u.p.sign) `state)
     ::
         [%glob @ ?(%http %ames) @ ~]
-      ?-  -.sign
-        %kick   `state
-      ::
-          ?(%poke-ack %watch-ack)
-        ?~  p.sign  `state
-        =/  act=tape  ?:(?=(%poke-ack -.sign) "start" "listen")
-        =.  charges
-          %-  new-chad:cha
-          ?:  ?=(%http i.t.t.wire)
-            hung+'failed to fetch glob via http'
-          hung+'failed to fetch glob via ames'
-        %.  [(new-cache:cha pre) state]
-        (slog leaf+"docket: couldn't {act} thread; will retry" u.p.sign)
-      ::
-          %fact
-        ?+    p.cage.sign  `state
-            %thread-fail
-          =+  !<([=term =tang] q.cage.sign)
-          ?.  |(=(term %cancelled) =(term %http-request-cancelled))
-            =.  charges  (new-chad:cha hung+'glob-failed')
-            :-  [add-fact:cha (new-cache:cha pre)]
-            ((slog leaf+"docket: thread failed;" leaf+<term> tang) state)
-          %-  (slog leaf+"docket: thread cancelled; retrying" leaf+<term> tang)
-          =.  charges  (new-chad:cha %install ~)
-          :_   state
-          [add-fact:cha (weld fetch-glob:cha (new-cache:cha pre))]
-        ::
-            %thread-done
-          =+  !<(=glob q.cage.sign)
-          =/  =charge   (~(got by charges) desk)
-          ?.  ?=(%glob -.href.docket.charge)
-            `state
-          =*  want=@uv  hash.glob-reference.href.docket.charge
-          =/  plea=@uv  (slav %uv i.t.wire)
-          ?.  =(want plea)
-            ::  we requested this at some point but no longer want it
-            ::
-            `state
-          =/  have=@uv  (hash-glob glob)
-          ?.  =(want have)
-            =.  charges   (new-chad:cha hung+'glob hash mismatch')
-            %.  [(new-cache:cha `charge) state]
-            =/  url=@t  (fall (slaw %t i.t.t.t.wire) '???')
-            %-  slog
-            :~  leaf+"docket: glob hash mismatch on {<desk>} from {(trip url)}"
-                leaf+"expected: {<want>}"
-                leaf+"received: {<have>}"
-            ==
-          =.  charges   (new-chad:cha glob+glob)
-          =.  by-base   (~(put by by-base) base.href.docket.charge desk)
-          [[add-fact:cha (new-cache:cha `charge)] state]
-        ==
-      ==
+      `state  ::  globs removed, no-op on outstanding results
     ==
   --
 ::
@@ -403,6 +346,7 @@
     ^-  (quip card _state)
     =*  cha  ~(. ch desk)
     =/  card-1
+      ::TODO  check if request already outstanding
       (~(warp-our pass /warp/[desk]) ~ desk %sing %z da+now.bowl /desk/docket-0)
     =^  cards-2  state
       ?.  (~(has by charges) desk)
@@ -429,6 +373,7 @@
     |=  [=desk =riot:clay]
     ^-  (quip card _state)
     =/  card-1
+      ::TODO  check if request is already outstanding
       (~(warp-our pass /warp/[desk]) ~ desk %next %z da+now.bowl /desk/docket-0)
     =^  cards-2  state
       =*  cha   ~(. ch desk)
@@ -520,237 +465,22 @@
   ::
   |^  ?+  method.request  [[405^~ ~] ~ state]
         %'GET'   [handle-get-request ~ state]
-        %'POST'  handle-upload
       ==
   ::
   ++  handle-get-request
     ^-  simple-payload:http
-    ?+  [site ext]:req-line  (redirect:gen '/apps/landscape/')
+    ?+  [site ext]:req-line  [[404 ~] `(as-octs:mimes:html 'docket catch-all 404')]
+        [[%$ ~] ~]  ::  root
+      (redirect:gen '/apps/landscape/')
+    ::
         [[%session ~] [~ %js]]
-      %-  inline-js-response
-      (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~)
-    ::
-        [[%docket %upload ~] ?(~ [~ %html])]
-      [[200 ['content-type' 'text/html']~] `(upload-page ~)]
-    ::
-        [[%apps @ *] *]
-      %+  payload-from-glob
-        (snag 1 site.req-line)
-      req-line(site (slag 2 site.req-line))
-    ==
-  ::
-  ++  upload-page
-    |=  msg=(list @t)
-    ^-  octs
-    %-  as-octt:mimes:html
-    %-  en-xml:html
-    ^-  manx
-    ::  desks: with local globs, eligible for upload
-    ::
-    =/  desks=(list desk)
-      %+  murn  ~(tap by charges)
-      |=  [d=desk [docket *]]
-      ^-  (unit desk)
-      ?:(?=(%glob -.href) `d ~)
-    ::
-    ;html
-      ;head
-        ;title:"%docket globulator"
-        ;meta(charset "utf-8");
-        ;style:'''
-               * { font-family: monospace; margin-top: 1em; }
-               li { margin-top: 0.5em; }
-               '''
-      ==
-      ;body
-        ;h2:"%docket globulator"
-        ;+  ?.  =(~ msg)
-              :-  [%p ~]
-              (join `manx`;br; (turn msg |=(m=@t `manx`:/"{(trip m)}")))
-            ;ol(start "0")
-              ;li:"""
-                  make sure the desk you want to upload a glob for has a
-                  desk.docket with %base and %glob- entries.
-                  """
-              ;li:"select the desk you want to upload the glob for."
-              ;li:"""
-                  select a directory containing the glob contents.
-                  usually contains at least an /index.html.
-                  """
-              ;li:"glob!"
-            ==
-            (safari and internet explorer do not support uploading directory
-            trees properly. please glob from other browsers.)
-        ;+  ?:  =(~ desks)
-              ;p:"no desks eligible for glob upload"
-            ;form(method "post", enctype "multipart/form-data")
-              ;label
-                ;+  :/"desk: "
-                ;select(name "desk")
-                  ;*  %+  turn  desks
-                      |=(d=desk =+((trip d) ;option(value -):"{-}"))
-                ==
-              ==
-              ;br;
-              ;label
-                ;+  :/"data: "
-                ;input
-                  =type             "file"
-                  =name             "glob"
-                  =directory        ""
-                  =webkitdirectory  ""
-                  =mozdirectory     "";
-              ==
-              ;br;
-              ;button(type "submit"):"glob!"
-            ==
+      ^-  simple-payload:http
+      ~&  '/session.js deprecated, use /~/host (or /~/name)'
+      %.  (as-octs:mimes:html (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~))
+      %*  .  js-response:gen
+        cache  %.n
       ==
     ==
-  ::
-  ++  handle-upload
-    ^-  [simple-payload:http (list card) _state]
-    ?.  ?=([[%docket %upload ~] ?(~ [~ %html])] [site ext]:req-line)
-      [[404^~ ~] [~ state]]
-    ::
-    =;  [desk=@ta =glob err=(list @t)]
-      =*  error-result
-        :_  [~ state]
-        [[400 ~] `(upload-page err)]
-      ::
-      ?.  =(~ err)  error-result
-      ::
-      =*  cha      ~(. ch desk)
-      =/  =charge  (~(got by charges) desk)
-      ::
-      =?  err  =(~ glob)
-        ['no files in glob' err]
-      =?  err  !?=(%glob -.href.docket.charge)
-        ['desk does not use glob' err]
-      ::
-      ?.  =(~ err)  error-result
-      :-  [[200 ~] `(upload-page 'successfully globbed' ~)]
-      ?>  ?=(%glob -.href.docket.charge)
-      ::
-      =.  charges  (new-chad:cha glob+glob)
-      =.  by-base
-        =-  (~(put by by-base) - desk)
-        base.href.docket.charge
-      ::
-      :_  state
-      %+  weld  (new-cache:cha `charge)
-      ::
-      =/  ours=?
-        =/  loc  location.glob-reference.href.docket.charge
-        ?&  ?=(%ames -.loc)
-            =(our.bowl ship.loc)
-        ==
-      ::
-      :*  add-fact:cha
-        ::
-          ?.  ours  ~
-          ^-  (list card)
-          =-  [%pass /write/[desk] %arvo %clay %rite -]~
-          :-  desk
-          %+  flux:space:userlib
-            /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket-0
-          %-  docket:cg
-          docket.charge(glob-reference.href [(hash-glob glob) %ames our.bowl])
-      ==
-    ::
-    ?~  parts=(de-request:multipart [header-list body]:request)
-      ~&  headers=header-list.request
-      [*@ta *glob 'failed to parse submitted data' ~]
-    ::
-    %+  roll  u.parts
-    |=  [[name=@t part:multipart] desk=@ta =glob err=(list @t)]
-    ^+  [desk glob err]
-    ?:  =('desk' name)
-      ::  must be a desk with existing charge
-      ::
-      ?.  ((sane %ta) body)
-        [desk glob (cat 3 'invalid desk: ' body) err]
-      ?.  (~(has by charges) body)
-        [desk glob (cat 3 'unknown desk: ' body) err]
-      [body glob err]
-    :-  desk
-    ::  all submitted files must be complete
-    ::
-    ?.  =('glob' name)  [glob (cat 3 'weird part: ' name) err]
-    ?~  file            [glob 'file without filename' err]
-    ?~  type            [glob (cat 3 'file without type: ' u.file) err]
-    ?^  code            [glob (cat 3 'strange encoding: ' u.code) err]
-    =/  filp            (fip u.file)
-    ::  ignore metadata files and other "junk"
-    ::TODO  consider expanding coverage
-    ::
-    ?:  =('DS_Store' (rear filp))
-      [glob err]
-    ::  make sure to exclude the top-level dir from the path
-    ::
-    :_  err
-    %+  ~(put by glob)  (slag 1 filp)
-    [u.type (as-octs:mimes:html body)]
-  ::
-  ++  split-at
-    =|  fst=tape
-    |=  [=tape char=@tD]
-    =.  tape  (flop tape)
-    |-
-    ^+  [fst fst]
-    ?~  tape  [(flop fst) (flop tape)]
-    ?:  =(i.tape char)
-      [(flop fst) (flop t.tape)]
-    $(tape t.tape, fst (snoc fst i.tape))
-  ::
-  ++  fip
-    |=  fil=@t
-    ^-  path
-    =/  [ext=tape fil=tape]  (split-at (trip fil) '.')
-    =-  (snoc - (crip ext))
-    %+  turn
-      (scan fil (most fas (star ;~(less fas next))))
-    |=  t=^tape
-    %-  crip
-    (en-urlt:html t)
-  ::
-  ::
-  ++  inline-js-response
-    |=  js=cord
-    ^-  simple-payload:http
-    %.  (as-octs:mimes:html js)
-    %*  .  js-response:gen
-      cache  %.n
-    ==
-  ::
-  ++  payload-from-glob
-    |=  [from=@ta what=request-line]
-    ^-  simple-payload:http
-    =/  des=(unit desk)
-      (~(get by by-base) from)
-    ?~  des  not-found:gen
-    =/  cha=(unit charge)
-      (~(get by charges) u.des)
-    ?~  cha  not-found:gen
-    ?.  ?=(%glob -.chad.u.cha)  not-found:gen
-    =*  glob  glob.chad.u.cha
-    =/  suffix=^path
-      (weld site.what (drop ext.what))
-    ?:  =(suffix /desk/js)
-      %-  inline-js-response
-      (rap 3 'window.desk = "' u.des '";' ~)
-    =?  suffix  !(~(has by glob) suffix)
-      (turn suffix |=(s=@t (crip (en-urlt:html (trip s)))))
-    =/  requested
-      ?:  (~(has by glob) suffix)  suffix
-      /index/html
-    =/  data=mime
-      (~(got by glob) requested)
-    =/  mime-type=@t  (rsh 3 (crip <p.data>))
-    =;  headers
-      [[200 headers] `q.data]
-    :-  content-type+mime-type
-    ?:  =(/index/html requested)  ~
-    ~[max-1-wk:gen]
   --
 ::
 ++  get-light-charge
@@ -788,68 +518,12 @@
   ++  new-cache
     |=  old=(unit charge)
     ^-  (list card)
-    ::  docket tries to serve glob contents from the runtime http server cache.
-    ::  as such, we must keep that cache updated as the glob changes.
-    ::
-    =;  caches=(map @t (unit cache-entry:eyre))
-      %+  turn  ~(tap by caches)
-      |=  [url=@t entry=(unit cache-entry:eyre)]
-      (arvo:(pass /cache) %eyre %set-response url entry)
-    %-  %~  gas  by
-        ^-  (map @t (unit cache-entry:eyre))
-        ::  clear old cache entries, if any
-        ::
-        ?~  old  ~
-        ?.  ?=(%glob -.chad.u.old)  ~
-        ?.  ?=(%glob -.href.docket.u.old)  ~
-        =/  base=@t
-          (cat 3 '/apps/' base.href.docket.u.old)
-        %-  ~(rep by glob.chad.u.old)
-        |=  [[=path *] out=(map @t (unit cache-entry:eyre))]
-        (~(put by out) (rap 3 base (spat (snip path)) '.' (rear path) ~) ~)
-    ::  overwrite with new cache entries, if needed
-    ::
-    =/  new  (~(got by charges) desk)
-    ?.  ?=(%glob -.chad.new)  ~
-    ?.  ?=(%glob -.href.docket.new)  ~
-    =/  base=@t
-      (cat 3 '/apps/' base.href.docket.new)
-    %+  turn  ~(tap by glob.chad.new)
-    |=  [=path =mime]
-    ::NOTE  +payload-from-glob responds to both /path.ext and /path/ext,
-    ::      and you could argue we should match that behavior here. however,
-    ::      we already don't (cannot) match its "fall back to /index/html"
-    ::      behavior, and the /path.ext case is by far the more common case.
-    ::      so, we simply assume /path.ext intent, ignore /path/ext cases,
-    ::      and reap 95% of the gains that way.
-    :-  (rap 3 base (spat (snip path)) '.' (rear path) ~)
-    =;  payload=simple-payload:http
-      `[& %payload payload]
-    ::NOTE  matches +payload-from-glob
-    :_  `q.mime
-    :-  200
-    [content-type+(rsh 3 (crip <p.mime>))]~
+    ::NOTE  we used to %set-response but don't anymore to avoid clashing.
+    ::      globs are deprecated, use desk-local foo-fileserver instead.
+    ~
   ++  fetch-glob
     ^-  (list card)
-    =/  =charge
-      ~|  desk/desk
-      (~(got by charges) desk)
-    =/  tid=@t  (cat 3 'docket-' (scot %uv (sham (mix eny.bowl desk))))
-    ?>  ?=(%glob -.href.docket.charge)
-    =/  ref  glob-reference.href.docket.charge
-    ?:  ?&  ?=(%ames -.location.ref)
-            =(our.bowl ship.location.ref)
-        ==
-      ~>  %slog.0^leaf/"docket: awaiting manual glob for {<desk>} desk"
-      ~
-    ~>  %slog.0^leaf/"docket: fetching {<-.location.ref>} glob for {<desk>} desk"
-    =/  =cage
-      :-  %spider-start
-      !>([~ `tid byk.bowl(r da+now.bowl) %glob !>(`[ref desk])])
-    :~  (leave-our:(pass (glob-wire ref)) %spider)
-        (watch-our:(pass (glob-wire ref)) %spider /thread-result/[tid])
-        (poke-our:(pass (glob-wire ref)) %spider cage)
-    ==
+    ~
   ++  docket-loc  `path`/desk/docket-0
   ++  docket-exists
     ?:  =(0 ud:.^(cass:clay %cw (scry:io desk ~)))  %.n
