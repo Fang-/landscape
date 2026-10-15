@@ -254,9 +254,9 @@
   --
 ::
 ++  on-arvo
-  |=  [=wire sign=sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   |^
-  ?+  wire  (on-arvo:def wire sign)
+  ?+  wire  (on-arvo:def wire gift)
     [%init ~]  !! :: setup sponsor ally
   ::
       [%sovereign @ ~]
@@ -267,9 +267,9 @@
   ++  take-sovereign
     |=  =desk
     =/  so  ~(. so:cc desk)
-    ?>  ?=([?(%clay %behn) %writ *] sign)
+    ?>  ?=([%clay %read *] gift)
     ?.  (~(has by sovereign) desk)  `this
-    =*  riot  p.sign
+    =*  riot  riot.gift
     ?~  riot  :: docket file is gone
       =.  sovereign  (~(del by sovereign) desk)
       [~[kick:so] this]
@@ -349,7 +349,7 @@
   ++  path  /treaty/(scot %p our.bowl)/[desk]
   ++  get-docket  .^(docket:docket %cx (scry:io desk /desk/docket-0))
   ++  warp
-    (warp-our:pass desk `[%next %x da+now.bowl /desk/docket-0])
+    (warp-our:pass ~ desk %next %x da+now.bowl /desk/docket-0)
   ++  kick
     (kick:io path ~)
   ++  give

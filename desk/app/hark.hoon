@@ -66,9 +66,9 @@
     [cards this]
   ++  on-peek  peek:cor
   ++  on-arvo
-    |=  [=wire sign=sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     =^  cards  state
-      abet:(arvo:cor wire sign)
+      abet:(arvo:cor wire gift)
     [cards this]
   ++  on-agent
     |=  [=wire =sign:agent:gall]
@@ -144,7 +144,7 @@
   ==
 ::
 ++  arvo
-  |=  [=wire sign=sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^+  cor
   ?+    wire  ~|(bad-arvo-take/wire !!)
       [%gc ~]
@@ -254,7 +254,7 @@
 ::
 ++  set-gc-wake
   =.  next-gc  (add now.bowl gc-interval)
-  (emit %pass /gc %arvo %b %wait next-gc)
+  (emit %pass /gc %arvo %behn %wait next-gc)
 ::
 ++  give-ui
   |=  =action:h

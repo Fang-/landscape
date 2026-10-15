@@ -82,10 +82,10 @@
   ++  on-agent  on-agent:def
   ::
   ++  on-arvo
-    |=  [=wire sign=sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
     =^  cards  state
-      abet:(arvo:cor wire sign)
+      abet:(arvo:cor wire gift)
     [cards this]
   --
 |_  [=bowl:gall cards=(list card)]
@@ -137,7 +137,7 @@
       :*  %pass
           /check-result/(scot %p ship)
           %arvo
-          %k
+          %khan
           %fard
           %landscape
           check-thread
@@ -152,7 +152,7 @@
     :*  %pass
         /check-result/(scot %p ship)
         %arvo
-        %k
+        %khan
         %fard
         %landscape
         check-thread
@@ -208,19 +208,18 @@
     [*@da %complete %no-data ~]
   ==
 ++  arvo
-  |=  [=wire sign=sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^+  cor
   ?+    wire  ~|([%bad-arvo-take wire] !!)
       [%check-result @ta ~]
-    ?>  ?=(%khan -.sign)
-    ?>  ?=(%arow +<.sign)
+    ?>  ?=([%khan %arow *] gift)
     =/  =ship  (slav %p i.t.wire)
     =/  =result:v
       :-  now
       :-  %complete
-      ?-  -.p.sign
-        %&  !<(complete:v q.p.p.sign)
-        %|  [%crash tang.p.p.sign]
+      ?-  -.res.gift
+        %&  !<(complete:v q.p.res.gift)
+        %|  [%crash tang.p.res.gift]
       ==
     =.  connections  (~(put by connections) [ship result])
     %-  give

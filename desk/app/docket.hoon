@@ -43,10 +43,10 @@
   ^-  (quip card _this)
   :_  this
   :~  ~(tire pass /tire)
-      (~(connect pass /eyre) [~ /] %docket)
-      (~(connect pass /eyre) [~ /apps] %docket)
-      (~(connect pass /eyre) [~ /docket] %docket)
-      (~(connect pass /eyre) [~ /session] %docket)
+      (~(connect pass /eyre) / %docket)
+      (~(connect pass /eyre) /apps %docket)
+      (~(connect pass /eyre) /docket %docket)
+      (~(connect pass /eyre) /session %docket)
       (~(wait pass /init) (add 1 now.bowl))
   ==
 ::
@@ -75,8 +75,8 @@
   =^  cards-5  old
     ?.  ?=(%5 -.old)  `old
     :_  old(- %6)
-    :~  (~(connect pass /eyre) [~ /docket] %docket)
-        (~(connect pass /eyre) [~ /session] %docket)
+    :~  (~(connect pass /eyre) /docket %docket)
+        (~(connect pass /eyre) /session %docket)
     ==
   ?>  ?=(%6 -.old)
   =/  cards-tire  [~(tire pass /tire) ~]
@@ -351,31 +351,31 @@
   --
 ::
 ++  on-arvo
-  |=  [=wire sign=sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   |^
   =^  cards  state
-    ?+  wire  (on-arvo:def wire sign)
+    ?+  wire  (on-arvo:def wire gift)
         [%init ~]
       =*  cha  ~(. ch q.byk.bowl)
       =.  charges  (~(put by charges) q.byk.bowl [docket:cha %install ~])
       [fetch-glob:cha state]
     ::
         [%eyre ~]
-      ?>  ?=([%eyre %bound *] sign)
-      ?:  accepted.sign   `state
-      ~&  [dap.bowl %failed-to-bind path.binding.sign]
+      ?>  ?=([%eyre %bound *] gift)
+      ?:  bound.gift   `state
+      ~&  [dap.bowl %failed-to-bind path.binding.gift]
       `state
     ::
         [%tire ~]
-      ?>  ?=([%clay %tire *] sign)
-      ?-  -.p.sign
-        %&  (on-rock p.p.sign)
-        %|  (on-wave p.p.sign)
+      ?>  ?=([%clay %tire *] gift)
+      ?-  -.p.gift
+        %&  (on-rock p.p.gift)
+        %|  (on-wave p.p.gift)
       ==
     ::
         [%warp * ~]
-      ?>  ?=(%writ +<.sign)
-      (on-writ i.t.wire p.sign)
+      ?>  ?=([%clay %read *] gift)
+      (on-writ i.t.wire riot.gift)
     ==
   [cards this]
   ::
@@ -403,7 +403,7 @@
     ^-  (quip card _state)
     =*  cha  ~(. ch desk)
     =/  card-1
-      (~(warp-our pass /warp/[desk]) desk ~ %sing %z da+now.bowl /desk/docket-0)
+      (~(warp-our pass /warp/[desk]) ~ desk %sing %z da+now.bowl /desk/docket-0)
     =^  cards-2  state
       ?.  (~(has by charges) desk)
         `state
@@ -429,7 +429,7 @@
     |=  [=desk =riot:clay]
     ^-  (quip card _state)
     =/  card-1
-      (~(warp-our pass /warp/[desk]) desk ~ %next %z da+now.bowl /desk/docket-0)
+      (~(warp-our pass /warp/[desk]) ~ desk %next %z da+now.bowl /desk/docket-0)
     =^  cards-2  state
       =*  cha   ~(. ch desk)
       =/  tyr
@@ -649,8 +649,9 @@
         ::
           ?.  ours  ~
           ^-  (list card)
-          =-  [%pass /write/[desk] %arvo %c %info -]~
-          %+  foal:space:userlib
+          =-  [%pass /write/[desk] %arvo %clay %rite -]~
+          :-  desk
+          %+  flux:space:userlib
             /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/desk/docket-0
           %-  docket:cg
           docket.charge(glob-reference.href [(hash-glob glob) %ames our.bowl])
@@ -793,7 +794,7 @@
     =;  caches=(map @t (unit cache-entry:eyre))
       %+  turn  ~(tap by caches)
       |=  [url=@t entry=(unit cache-entry:eyre)]
-      (arvo:(pass /cache) %e %set-response url entry)
+      (arvo:(pass /cache) %eyre %set-response url entry)
     %-  %~  gas  by
         ^-  (map @t (unit cache-entry:eyre))
         ::  clear old cache entries, if any
