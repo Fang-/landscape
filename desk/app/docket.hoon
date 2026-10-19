@@ -1,5 +1,9 @@
 /-  *docket, hood, treaty
 /+  *server, *hood, agentio, default-agent, multipart, dbug, verb
+::
+::TODO  glob fetching & serving is deprecated and has been crudely ripped out,
+::      but much dead-end logic remains. clean up!
+::
 |%
 +$  card  card:agent:gall
 +$  app-state
@@ -347,7 +351,9 @@
     =*  cha  ~(. ch desk)
     =/  card-1
       ::TODO  check if request already outstanding
-      (~(warp-our pass /warp/[desk]) ~ desk %sing %z da+now.bowl /desk/docket-0)
+      ::REVIEW  +on-writ doesn't use the read result, so why doesn't this
+      ::        call into that logic directly?
+      (~(warp-our pass /warp/[desk]) %read desk %sing %z da+now.bowl /desk/docket-0)
     =^  cards-2  state
       ?.  (~(has by charges) desk)
         `state
@@ -374,7 +380,7 @@
     ^-  (quip card _state)
     =/  card-1
       ::TODO  check if request is already outstanding
-      (~(warp-our pass /warp/[desk]) ~ desk %next %z da+now.bowl /desk/docket-0)
+      (~(warp-our pass /warp/[desk]) %next desk %next %z da+now.bowl /desk/docket-0)
     =^  cards-2  state
       =*  cha   ~(. ch desk)
       =/  tyr
@@ -419,8 +425,8 @@
         [~[add-fact:cha] state]
       ::  if the glob changed, forget the old and fetch the new
       ::
-      =.  charges  (new-chad:cha %install ~)
-      [[add-fact:cha (weld fetch-glob:cha (new-cache:cha pre))] state]
+      =.  charges  (new-chad:cha %hung 'glob no longer supported')
+      [[add-fact:cha ~] state]
     [[card-1 cards-2] state]
   --
 ::
