@@ -478,14 +478,6 @@
     ?+  [site ext]:req-line  [[404 ~] `(as-octs:mimes:html 'docket catch-all 404')]
         [[%$ ~] ~]  ::  root
       (redirect:gen '/apps/landscape/')
-    ::
-        [[%session ~] [~ %js]]
-      ^-  simple-payload:http
-      ~&  '/session.js deprecated, use /~/host (or /~/name)'
-      %.  (as-octs:mimes:html (rap 3 'window.ship = "' (rsh 3 (scot %p our.bowl)) '";' ~))
-      %*  .  js-response:gen
-        cache  %.n
-      ==
     ==
   --
 ::
